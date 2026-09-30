@@ -1,0 +1,151 @@
+{% load static humanize %}
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>UyTop | O'zingizga mos uyni toping</title>
+  <meta name="description" content="O'zbekiston bo'ylab sotuv va ijara uy-joy e'lonlarini UyTop'dan toping.">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+  <header class="home-header">
+    <a class="home-brand" href="{% url 'home' %}" aria-label="UyTop bosh sahifa">
+      <span class="brand-mark">U</span><span>UyTop</span>
+    </a>
+    <nav class="main-nav" aria-label="Asosiy navigatsiya">
+      <a href="{% url 'properties:list' %}">E'lonlar</a>
+      <a href="{% url 'properties:sale' %}">Sotish</a>
+      <a href="{% url 'properties:rent' %}">Ijara</a>
+      <a href="#why-us">Biz haqimizda</a>
+    </nav>
+    <div class="header-actions">
+      {% if request.user.is_authenticated %}
+        <a class="header-link" href="{% url 'properties:create' %}">E'lon berish</a>
+        <a class="header-link" href="{% url 'favorites:list' %}">Saqlanganlar</a>
+        <a class="header-link" href="{% url 'accounts:profile' %}">Profil</a>
+        <form method="post" action="{% url 'accounts:logout' %}">
+          {% csrf_token %}<button class="header-link logout-link" type="submit">Chiqish</button>
+        </form>
+      {% else %}
+        <a class="header-link" href="{% url 'accounts:login' %}">Kirish</a>
+        <a class="header-link" href="{% url 'properties:create' %}">E'lon berish</a>
+        <a class="header-cta" href="{% url 'accounts:register' %}">Hisob yaratish</a>
+      {% endif %}
+    </div>
+  </header>
+  {% if messages %}<div class="home-messages">{% for message in messages %}<p>{{ message }}</p>{% endfor %}</div>{% endif %}
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <img class="hero-photo" src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2200&q=85" alt="Zamonaviy hovli uyining tashqi ko'rinishi">
+      <div class="hero-shade"></div>
+      <div class="hero-content">
+        <p class="hero-kicker">O'ZBEKISTON BO'YLAB UY-JOY</p>
+        <h1 id="hero-title">O'zingizga mos uyni toping</h1>
+        <p>Yangi manzil, qulay imkoniyatlar va ishonchli e'lonlar bir joyda.</p>
+      </div>
+    </section>
+
+    <section class="search-band" id="search" aria-label="Uy qidirish">
+      <form class="search-form" action="{% url 'properties:list' %}" method="get">
+        <div class="search-field keyword-field">
+          <label for="search-keyword">Kalit so'z</label>
+          <input id="search-keyword" type="search" name="q" placeholder="Masalan, 3 xonali kvartira">
+        </div>
+        <div class="search-field">
+          <label for="search-deal">E'lon turi</label>
+          <select id="search-deal" name="deal_type">
+            <option value="">Sotish yoki ijara</option>
+            <option value="sale">Sotish</option>
+            <option value="rent">Ijara</option>
+          </select>
+        </div>
+        <div class="search-field city-field">
+          <label for="search-city">Shahar</label>
+          <input id="search-city" type="text" name="city" placeholder="Shahar nomi">
+        </div>
+        <button class="search-button" type="submit">Uylarni qidirish <span aria-hidden="true">→</span></button>
+      </form>
+    </section>
+
+    <section class="deal-band" id="deals">
+      <div class="deal-inner">
+        <div class="deal-intro">
+          <p class="section-kicker">SIZGA QULAY</p>
+          <h2>Qanday uy qidiryapsiz?</h2>
+          <p>Rejangizga mos e'lonlarni tez toping.</p>
+        </div>
+        <a class="deal-choice sale-choice" href="{% url 'properties:sale' %}">
+          <span class="deal-label">SOTIB OLISH</span>
+          <strong>Sotuvdagi uylar</strong>
+          <span class="deal-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="deal-choice rent-choice" href="{% url 'properties:rent' %}">
+          <span class="deal-label">IJARAGA OLISH</span>
+          <strong>Ijara uylar</strong>
+          <span class="deal-arrow" aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section" id="featured">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">UYTOP TAVSIYASI</p>
+          <h2>Tavsiya etilgan uylar</h2>
+          <p class="section-description">Jamoamiz tanlagan e'lonlar.</p>
+        </div>
+      </div>
+      {% if featured_properties %}
+        <div class="property-grid">
+          {% for property in featured_properties %}{% include "partials/property_card.html" %}{% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state"><strong>Tavsiya e'lonlari tayyorlanmoqda</strong><p>Yangi tavsiya etilgan uylar shu yerda ko'rinadi.</p></div>
+      {% endif %}
+    </section>
+
+    <section class="section latest-section" id="listings">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">YANGI E'LONLAR</p>
+          <h2>So'nggi uylar</h2>
+          <p class="section-description">Platformaga yaqinda joylangan tasdiqlangan e'lonlar.</p>
+        </div>
+      </div>
+      {% if latest_properties %}
+        <div class="property-grid">
+          {% for property in latest_properties %}{% include "partials/property_card.html" %}{% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state"><strong>Hozircha e'lonlar yo'q</strong><p>Yangi uy-joy e'lonlari tasdiqlangach shu yerda chiqadi.</p></div>
+      {% endif %}
+    </section>
+
+    <section class="why-band" id="why-us">
+      <div class="why-inner">
+        <div class="why-heading">
+          <p class="section-kicker">UYTOP BILAN</p>
+          <h2>To'g'ri manzilni topish osonroq.</h2>
+        </div>
+        <div class="why-point"><span>01</span><div><strong>Tekshirilgan e'lonlar</strong><p>Har bir e'lon platforma moderatsiyasidan o'tadi.</p></div></div>
+        <div class="why-point"><span>02</span><div><strong>Qulay qidiruv</strong><p>Shahar va e'lon turi bo'yicha tez saralang.</p></div></div>
+        <div class="why-point"><span>03</span><div><strong>Bevosita aloqa</strong><p>E'lon egasi bilan to'g'ridan-to'g'ri bog'laning.</p></div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="home-footer">
+    <a class="home-brand" href="{% url 'home' %}"><span class="brand-mark">U</span><span>UyTop</span></a>
+    <p>O'zbekiston bo'ylab uy-joy topish va joylash.</p>
+    <span class="copyright">© {% now "Y" %} UyTop</span>
+  </footer>
+</body>
+</html>

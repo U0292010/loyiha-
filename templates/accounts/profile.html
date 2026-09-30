@@ -1,0 +1,50 @@
+{% extends "accounts/base.html" %}
+{% block title %}Profil | UyTop{% endblock %}
+{% block content %}
+<section class="profile-shell">
+  <div class="profile-heading">
+    <div>
+      <p class="eyebrow">SHAXSIY KABINET</p>
+      <h1>Profil ma'lumotlari</h1>
+      <p>Hisobingizdagi ma'lumotlarni ko'ring va yangilang.</p>
+      <a class="profile-favorites-link" href="{% url 'favorites:list' %}">Saqlangan uylar →</a>
+    </div>
+    <div class="profile-avatar" aria-hidden="true">
+      {% if request.user.profile.avatar %}
+        <img src="{{ request.user.profile.avatar.url }}" alt="">
+      {% else %}
+        {{ request.user.first_name|default:request.user.username|first|upper }}
+      {% endif %}
+    </div>
+  </div>
+  <form method="post" enctype="multipart/form-data" class="profile-form">
+    {% csrf_token %}
+    <div class="profile-section">
+      <h2>Asosiy ma'lumotlar</h2>
+      <div class="field-grid">
+        {% for field in account_form %}
+          <div class="form-field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="profile-section">
+      <h2>Aloqa va profil</h2>
+      <div class="field-grid">
+        {% for field in profile_form %}
+          <div class="form-field {% if field.name == 'bio' %}field-wide{% endif %}">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<div class="field-help">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="profile-actions"><button class="primary-button" type="submit">O'zgarishlarni saqlash</button></div>
+  </form>
+</section>
+{% endblock %}

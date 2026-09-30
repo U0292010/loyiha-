@@ -1,0 +1,12 @@
+.env
+.env.*.local
+.venv/
+__pycache__/
+*.py[cod]
+*.sqlite3
+media/
+staticfiles/
+.pytest_cache/
+.coverage
+htmlcov/
+.docker-data/

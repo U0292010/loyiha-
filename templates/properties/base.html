@@ -1,0 +1,43 @@
+{% load static %}
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'css/properties.css' %}">
+  <title>{% block title %}UyTop{% endblock %}</title>
+</head>
+<body>
+  <header class="home-header">
+    <a class="home-brand" href="{% url 'home' %}"><span class="brand-mark">U</span><span>UyTop</span></a>
+    <nav class="main-nav" aria-label="Asosiy navigatsiya">
+      <a href="{% url 'properties:list' %}">E'lonlar</a>
+      <a href="{% url 'properties:sale' %}">Sotish</a>
+      <a href="{% url 'properties:rent' %}">Ijara</a>
+    </nav>
+    <div class="header-actions">
+      {% if request.user.is_authenticated %}
+        <a class="header-link" href="{% url 'favorites:list' %}">Saqlanganlar</a>
+        <a class="header-link" href="{% url 'accounts:profile' %}">Profil</a>
+        <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="header-link" type="submit">Chiqish</button></form>
+      {% else %}
+        <a class="header-link" href="{% url 'accounts:login' %}">Kirish</a>
+        <a class="header-cta" href="{% url 'accounts:register' %}">Hisob yaratish</a>
+      {% endif %}
+    </div>
+  </header>
+  {% if messages %}<div class="property-messages">{% for message in messages %}<p>{{ message }}</p>{% endfor %}</div>{% endif %}
+  <main>{% block content %}{% endblock %}</main>
+  <footer class="home-footer">
+    <a class="home-brand" href="{% url 'home' %}"><span class="brand-mark">U</span><span>UyTop</span></a>
+    <p>O'zbekiston bo'ylab uy-joy topish va joylash.</p>
+    <span class="copyright">© {% now "Y" %} UyTop</span>
+  </footer>
+</body>
+</html>

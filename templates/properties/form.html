@@ -1,0 +1,76 @@
+{% extends "properties/base.html" %}
+{% block title %}{% if is_create %}Uy e'loni qo'shish{% else %}E'lonni tahrirlash{% endif %} | UyTop{% endblock %}
+{% block content %}
+<section class="property-form-page">
+  <a class="back-link" href="{% if is_create %}{% url 'home' %}{% else %}{% url 'properties:detail' property.slug %}{% endif %}">← Orqaga</a>
+  <header class="form-page-heading">
+    <p class="section-kicker">UYTOP E'LONI</p>
+    <h1>{% if is_create %}Uy e'lonini joylashtiring{% else %}E'lonni tahrirlash{% endif %}</h1>
+    <p>{% if is_create %}Ma'lumotlarni to'ldiring. E'lon moderatsiyadan so'ng ko'rinadi.{% else %}Saqlangan o'zgarishlar e'lonni qayta moderatsiyaga yuboradi.{% endif %}</p>
+  </header>
+  <form method="post" enctype="multipart/form-data" class="property-form">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+    <section class="form-section">
+      <h2>Asosiy ma'lumotlar</h2>
+      <div class="property-field-grid">
+        {% for field in form %}
+          {% if field.name == "title" or field.name == "deal_type" or field.name == "property_type" or field.name == "price" %}
+            <div class="form-field {% if field.name == 'title' %}field-span-two{% endif %}">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}
+              {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+    <section class="form-section">
+      <h2>Manzil</h2>
+      <div class="property-field-grid">
+        {% for field in form %}
+          {% if field.name == "city" or field.name == "district" or field.name == "address" %}
+            <div class="form-field {% if field.name == 'address' %}field-span-two{% endif %}">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}
+              {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+    <section class="form-section">
+      <h2>Tafsilotlar</h2>
+      <div class="property-field-grid">
+        {% for field in form %}
+          {% if field.name == "area" or field.name == "rooms" or field.name == "floor" or field.name == "total_floors" or field.name == "renovation" or field.name == "furnished" or field.name == "phone" or field.name == "description" %}
+            <div class="form-field {% if field.name == 'description' %}field-span-two{% endif %} {% if field.name == 'furnished' %}checkbox-field{% endif %}">
+              {% if field.name == 'furnished' %}{{ field }}<label for="{{ field.id_for_label }}">{{ field.label }}</label>{% else %}<label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% endif %}
+              {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+    <section class="form-section">
+      <h2>Rasmlar</h2>
+      {% if not is_create and property.images.all %}
+        <div class="existing-images">
+          {% for image in property.images.all %}
+            <label class="existing-image">
+              <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:property.title }}" loading="lazy">
+              <span><input type="checkbox" name="remove_images" value="{{ image.pk }}"> O'chirish</span>
+            </label>
+          {% endfor %}
+        </div>
+      {% endif %}
+      <div class="form-field upload-field">
+        <label for="{{ form.images.id_for_label }}">{{ form.images.label }}</label>{{ form.images }}
+        {% if form.images.help_text %}<div class="field-help">{{ form.images.help_text }}</div>{% endif %}
+        {% if form.images.errors %}<div class="field-errors">{{ form.images.errors }}</div>{% endif %}
+      </div>
+    </section>
+    <div class="form-submit-row">
+      <button class="search-button" type="submit">{% if is_create %}E'lonni yuborish{% else %}O'zgarishlarni saqlash{% endif %} <span aria-hidden="true">→</span></button>
+    </div>
+  </form>
+</section>
+{% endblock %}

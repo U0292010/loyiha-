@@ -1,0 +1,45 @@
+{% load static %}
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fa">
+  <link rel="icon" href="data:,">
+  <title>{% block title %}UyTop{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{% url 'home' %}" aria-label="UyTop bosh sahifasi">
+      <span class="brand-mark">U</span><span>UyTop</span>
+    </a>
+    <nav class="header-nav" aria-label="Asosiy navigatsiya">
+      {% if request.user.is_authenticated %}
+        <a href="{% url 'accounts:profile' %}">Profil</a>
+        <form method="post" action="{% url 'accounts:logout' %}">
+          {% csrf_token %}
+          <button class="nav-logout" type="submit">Chiqish</button>
+        </form>
+      {% else %}
+        <a href="{% url 'accounts:login' %}">Kirish</a>
+        <a class="nav-register" href="{% url 'accounts:register' %}">Ro'yxatdan o'tish</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    {% if messages %}
+      <div class="messages" role="status">
+        {% for message in messages %}<p class="message {{ message.tags }}">{{ message }}</p>{% endfor %}
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">UyTop <span>·</span> O'zbekiston bo'ylab uy-joy platformasi</footer>
+</body>
+</html>

@@ -1,0 +1,66 @@
+{% extends "properties/base.html" %}
+{% load humanize %}
+{% block title %}{{ property.title }} | UyTop{% endblock %}
+{% block content %}
+<section class="property-detail-page">
+  <a class="back-link" href="{% url 'home' %}#listings">← Bosh sahifaga</a>
+  {% if request.user == property.owner or request.user.is_staff %}
+    <div class="owner-toolbar">
+      <span class="status-label status-{{ property.status }}">{{ property.get_status_display }}</span>
+      <a class="outline-button" href="{% url 'properties:edit' property.slug %}">Tahrirlash</a>
+      <a class="danger-link" href="{% url 'properties:delete' property.slug %}">O'chirish</a>
+    </div>
+  {% endif %}
+  <div class="detail-heading">
+    <div>
+      <div class="detail-badges"><span class="property-deal {% if property.deal_type == 'rent' %}rent-badge{% endif %}">{{ property.get_deal_type_display }}</span><span class="type-label">{{ property.get_property_type_display }}</span></div>
+      <h1>{{ property.title }}</h1>
+      <p class="detail-address">{{ property.address }}, {{ property.district }}, {{ property.city }}</p>
+    </div>
+    <p class="detail-price">{{ property.price|floatformat:0|intcomma }} <span>so'm{% if property.deal_type == 'rent' %} / oy{% endif %}</span></p>
+  </div>
+
+  {% with cover=property.images.all|first %}
+    {% if cover %}
+      <div class="detail-gallery">
+        {% for image in property.images.all %}
+          <figure class="gallery-image {% if forloop.first %}gallery-main{% endif %}">
+            <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:property.title }}" {% if not forloop.first %}loading="lazy"{% endif %}>
+          </figure>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="detail-no-photo">Bu e'lon uchun rasm yuklanmagan.</div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="detail-layout">
+    <article class="detail-main">
+      <section class="detail-section">
+        <h2>Uy haqida</h2>
+        <div class="detail-facts">
+          <div><span>Maydon</span><strong>{{ property.area|floatformat:0 }} m²</strong></div>
+          <div><span>Xonalar</span><strong>{% if property.rooms %}{{ property.rooms }}{% else %}Ko'rsatilmagan{% endif %}</strong></div>
+          <div><span>Qavat</span><strong>{% if property.floor %}{{ property.floor }}{% else %}Ko'rsatilmagan{% endif %}</strong></div>
+          <div><span>Ta'mirlash</span><strong>{{ property.get_renovation_display }}</strong></div>
+          <div><span>Jihozlangan</span><strong>{% if property.furnished %}Ha{% else %}Yo'q{% endif %}</strong></div>
+          {% if property.total_floors %}<div><span>Jami qavatlar</span><strong>{{ property.total_floors }}</strong></div>{% endif %}
+        </div>
+      </section>
+      <section class="detail-section description-section">
+        <h2>Tavsif</h2>
+        <div class="description-text">{{ property.description|linebreaks }}</div>
+      </section>
+    </article>
+    <aside class="contact-panel">
+      {% include "partials/favorite_button.html" %}
+      <p class="section-kicker">E'LON EGASI</p>
+      <h2>{{ property.owner.get_full_name|default:property.owner.username }}</h2>
+      <p class="contact-location">{{ property.city }}, {{ property.district }}</p>
+      <a class="contact-button" href="tel:{{ property.phone }}">{{ property.phone }}</a>
+      {% if request.user == property.owner or request.user.is_staff %}<p class="review-note">E'lon {{ property.get_status_display|lower }} holatida.</p>{% endif %}
+      {% if request.user == property.owner and property.rejection_reason %}<p class="rejection-reason"><strong>Rad etish sababi:</strong> {{ property.rejection_reason }}</p>{% endif %}
+    </aside>
+  </div>
+</section>
+{% endblock %}

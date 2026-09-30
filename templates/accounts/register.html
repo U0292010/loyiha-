@@ -1,0 +1,33 @@
+{% extends "accounts/base.html" %}
+{% block title %}Ro'yxatdan o'tish | UyTop{% endblock %}
+{% block content %}
+<section class="auth-layout">
+  <div class="auth-aside">
+    <p class="eyebrow">UYTOP HAMJAMIYATI</p>
+    <h1>Yangi manzilingiz<br>shu yerdan boshlanadi.</h1>
+    <p class="aside-copy">Bir necha daqiqada hisob yarating va UyTop imkoniyatlaridan foydalaning.</p>
+    <div class="aside-rule"><span></span><span></span><span></span></div>
+  </div>
+  <div class="form-panel">
+    <div class="panel-heading">
+      <p class="eyebrow">BEPUL HISOB</p>
+      <h2>Ro'yxatdan o'ting</h2>
+      <p>Hisobingiz uchun ma'lumotlarni to'ldiring.</p>
+    </div>
+    <form method="post" class="account-form">
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+      {% for field in form %}
+        <div class="form-field">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<div class="field-help">{{ field.help_text|safe }}</div>{% endif %}
+          {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+        </div>
+      {% endfor %}
+      <button class="primary-button" type="submit">Hisob yaratish <span aria-hidden="true">→</span></button>
+    </form>
+    <p class="form-switch">Hisobingiz bormi? <a href="{% url 'accounts:login' %}">Kirish</a></p>
+  </div>
+</section>
+{% endblock %}

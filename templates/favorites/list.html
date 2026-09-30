@@ -1,0 +1,26 @@
+{% extends "properties/base.html" %}
+{% block title %}Saqlangan uylar | UyTop{% endblock %}
+{% block content %}
+<section class="listings-page favorites-page">
+  <header class="listings-heading">
+    <div>
+      <p class="section-kicker">SHAXSIY RO'YXAT</p>
+      <h1>Saqlangan uylar</h1>
+      <p>{{ properties|length }} ta e'lon</p>
+    </div>
+    <a class="outline-button" href="{% url 'properties:list' %}">E'lonlarni ko'rish</a>
+  </header>
+  {% if properties %}
+    <div class="favorite-property-grid">
+      {% for property in properties %}{% include "partials/property_card.html" %}{% endfor %}
+    </div>
+  {% else %}
+    <div class="listing-empty">
+      <p class="section-kicker">SAQLANGANLAR</p>
+      <h2>Hozircha saqlangan e'lon yo'q</h2>
+      <p>Qidiruvdagi yurak tugmasi orqali yoqqan uylaringizni shu yerda saqlang.</p>
+      <a class="header-cta" href="{% url 'properties:list' %}">Uylarni ko'rish</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

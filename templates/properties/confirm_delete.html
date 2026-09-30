@@ -1,0 +1,15 @@
+{% extends "properties/base.html" %}
+{% block title %}E'lonni o'chirish | UyTop{% endblock %}
+{% block content %}
+<section class="delete-page">
+  <p class="section-kicker">E'LONNI O'CHIRISH</p>
+  <h1>Ushbu e'lonni o'chirasizmi?</h1>
+  <p class="delete-title">{{ property.title }}</p>
+  <p class="delete-warning">Bu amalni ortga qaytarib bo'lmaydi. E'lon bilan bog'langan rasmlar ham o'chiriladi.</p>
+  <form method="post" class="delete-actions">
+    {% csrf_token %}
+    <a class="outline-button" href="{% url 'properties:detail' property.slug %}">Bekor qilish</a>
+    <button class="delete-button" type="submit">E'lonni o'chirish</button>
+  </form>
+</section>
+{% endblock %}

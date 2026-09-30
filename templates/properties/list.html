@@ -1,0 +1,65 @@
+{% extends "properties/base.html" %}
+{% load humanize %}
+{% block title %}{{ page_title }} | UyTop{% endblock %}
+{% block content %}
+<section class="listings-page">
+  <header class="listings-heading">
+    <div>
+      <p class="section-kicker">UYTOP E'LONLARI</p>
+      <h1>{{ page_title }}</h1>
+      <p>{{ result_count|intcomma }} ta tasdiqlangan e'lon</p>
+    </div>
+    <a class="header-cta" href="{% url 'properties:create' %}">E'lon berish</a>
+  </header>
+
+  <div class="listings-layout">
+    <aside class="filters-aside">
+      <details class="filter-panel" {% if filters_expanded %}open{% endif %}>
+        <summary>Qidiruv va filterlar</summary>
+        <form class="filters-form" method="get" action="">
+          {% for field in form %}
+            <div class="filter-field {% if field.name == 'min_price' or field.name == 'max_price' or field.name == 'min_area' or field.name == 'max_area' %}filter-range-field{% endif %}">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+            </div>
+          {% endfor %}
+          {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+          <button class="search-button" type="submit">Filterlash <span aria-hidden="true">→</span></button>
+          <a class="clear-filters" href="{{ clear_url }}">Filterlarni tozalash</a>
+        </form>
+      </details>
+    </aside>
+
+    <div class="listing-results">
+      {% if page_obj.object_list %}
+        <div class="listing-result-meta">
+          <span>{{ page_obj.start_index|intcomma }}–{{ page_obj.end_index|intcomma }} / {{ result_count|intcomma }}</span>
+          <span>Saralash: {{ sort_label }}</span>
+        </div>
+        <div class="listing-property-grid">
+          {% for property in page_obj %}{% include "partials/property_card.html" %}{% endfor %}
+        </div>
+        {% if page_obj.has_other_pages %}
+          <nav class="pagination" aria-label="E'lonlar sahifalari">
+            {% if page_obj.has_previous %}
+              <a href="?{% if pagination_query %}{{ pagination_query }}&amp;{% endif %}page={{ page_obj.previous_page_number }}" aria-label="Oldingi sahifa">← Oldingi</a>
+            {% else %}<span class="pagination-disabled">← Oldingi</span>{% endif %}
+            <span class="pagination-current">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+              <a href="?{% if pagination_query %}{{ pagination_query }}&amp;{% endif %}page={{ page_obj.next_page_number }}" aria-label="Keyingi sahifa">Keyingi →</a>
+            {% else %}<span class="pagination-disabled">Keyingi →</span>{% endif %}
+          </nav>
+        {% endif %}
+      {% else %}
+        <div class="listing-empty">
+          <p class="section-kicker">NATIJALAR</p>
+          <h2>{% if form.errors %}Filter qiymatlarini tekshiring{% else %}Mos e'lon topilmadi{% endif %}</h2>
+          <p>{% if form.errors %}Ko'rsatilgan qiymatlarni tuzatib qayta qidiring.{% else %}Filterlarni o'zgartirib ko'ring yoki keyinroq qayta tekshiring.{% endif %}</p>
+          <a class="outline-button" href="{{ clear_url }}">Barcha e'lonlarni ko'rish</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

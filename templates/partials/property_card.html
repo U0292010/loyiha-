@@ -1,0 +1,29 @@
+{% load humanize %}
+<article class="property-card">
+  <div class="property-photo">
+    {% with cover=property.images.all|first %}
+      {% if cover %}
+        <a class="property-image-link" href="{% url 'properties:detail' property.slug %}">
+          <img src="{{ cover.image.url }}" alt="{{ cover.alt_text|default:property.title }}" loading="lazy">
+        </a>
+      {% else %}
+        <a class="property-image-link" href="{% url 'properties:detail' property.slug %}">
+          <div class="no-photo"><span>UyTop</span><small>Rasm mavjud emas</small></div>
+        </a>
+      {% endif %}
+    {% endwith %}
+    <span class="property-deal {% if property.deal_type == 'rent' %}rent-badge{% endif %}">{{ property.get_deal_type_display }}</span>
+    {% if property.is_featured %}<span class="featured-badge">Tavsiya</span>{% endif %}
+    {% include "partials/favorite_button.html" %}
+  </div>
+  <div class="property-info">
+    <div class="property-price">{{ property.price|floatformat:0|intcomma }} <span>so'm{% if property.deal_type == 'rent' %} / oy{% endif %}</span></div>
+    <h3><a href="{% url 'properties:detail' property.slug %}">{{ property.title }}</a></h3>
+    <p class="property-location">{{ property.district }}, {{ property.city }}</p>
+    <div class="property-facts">
+      <span>{{ property.get_property_type_display }}</span>
+      {% if property.rooms %}<span>{{ property.rooms }} xona</span>{% endif %}
+      <span>{{ property.area|floatformat:0 }} m²</span>
+    </div>
+  </div>
+</article>
